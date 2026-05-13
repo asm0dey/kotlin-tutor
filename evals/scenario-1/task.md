@@ -2,7 +2,7 @@
 
 ## Problem Description
 
-The platform team maintains test suites for two components: a StringFormatter utility and a UserService. Both were written in JUnit 5 before the project adopted Kotest.
+The platform team maintains test suites for two components: a StringFormatter utility and a UserService. Both were written in JUnit 5 some time ago, and the team has been modernising older test files to fit current project conventions.
 
 The files are:
 
