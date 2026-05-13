@@ -41,6 +41,17 @@ tessl install jbaruch/kotlin-tutor
 |--------|---------|
 | [verify-no-junit-assertions.sh](scripts/verify-no-junit-assertions.sh) | Fails CI if any test file under `src/test/` still uses JUnit-style assertions. Delegated from the `kotlinify-tests` skill; runs standalone as a CI gate. Enforces rule K-4. |
 
+### Eval Scenarios
+
+| Scenario | Purpose |
+|----------|---------|
+| scenario-0, scenario-1, scenario-2 | Real evals for the three skills (auto-generated from the tile, curated to remove bleeding) |
+| trial-1-task-leaks-language | **Pedagogical** — slide-59 demo, task leaks language, baseline 100% |
+| trial-2-rubric-grades-features | **Pedagogical** — slide-59 demo, rubric still grades features only, baseline still 100% |
+| trial-3-rubric-weights-language | **Pedagogical** — slide-59 demo, rubric weights idiomatic Kotlin 80%, lift becomes measurable |
+
+The pedagogical scenarios are intentionally bad eval design — they ship publicly so audiences of the talk "You're Absolutely Right (and Other Lies My AI Told Me)" can browse them in the registry and see why the failures land at 100% / 100% / ~20%-then-~95%.
+
 ## The Skill / Script Delegation Pattern
 
 The `kotlinify-tests` skill demonstrates the script-delegation pattern in miniature: the skill does the judgment work (which Kotest matcher fits this JUnit call? what spec style preserves the original structure?), and `verify-no-junit-assertions.sh` does the deterministic gate (did any JUnit assertion slip through?). Judgment lives in the skill; mechanism lives in the shell. The script also runs when the agent isn't present — human commits go through the same gate in CI.

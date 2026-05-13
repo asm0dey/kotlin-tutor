@@ -1,0 +1,16 @@
+{
+  "context": "Identical rubric to trial-1 — grades features only, no language idiom checks. Combined with the language-neutral task (no 'in Kotlin' leak), baseline still scores 100% because the rubric checks behavior any competent agent produces in any language. Demonstrates that fixing the bleed in the task alone is not enough — the rubric also has to test what the plugin teaches.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "addTask works",
+      "description": "Calling addTask(\"buy milk\") followed by reading the list returns a single task with title 'buy milk'",
+      "max_score": 50
+    },
+    {
+      "name": "markComplete works",
+      "description": "Calling markComplete(id) on a previously-added task flips its completed flag (or equivalent state representation) to true; the task remains in the list",
+      "max_score": 50
+    }
+  ]
+}

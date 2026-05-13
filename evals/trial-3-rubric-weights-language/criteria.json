@@ -1,0 +1,41 @@
+{
+  "context": "The fixed rubric for the todo-app task. Weights idiomatic Kotlin at 80% (the plugin's actual value) and basic feature correctness at 10% each. Baseline scores ~20% because it picks any plausible language and implements the operations, but the rubric grades language idioms which baseline knows little about. With kotlin-tutor loaded, the agent picks Kotlin AND follows the K-1..K-6 idiom rules, scoring ~95%. Lift becomes measurable.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Written in Kotlin",
+      "description": "The output file is a Kotlin source file (`.kt`), uses `fun` for function declarations and Kotlin syntax (not Python `def`, JavaScript `function`, Java `public static void`, etc.). The output compiles as Kotlin.",
+      "max_score": 25
+    },
+    {
+      "name": "Task is a data class",
+      "description": "The internal task record is declared as a `data class` (e.g. `data class Task(val id: Int, val title: String, val completed: Boolean)`). Not a regular `class` with manual `equals`/`hashCode`/`toString`. K-3 of jbaruch/kotlin-tutor.",
+      "max_score": 20
+    },
+    {
+      "name": "Properties default to val",
+      "description": "Properties on the task record and on the todo-app holder use `val`, not `var`, unless mutation is genuinely required. K-1 of jbaruch/kotlin-tutor.",
+      "max_score": 15
+    },
+    {
+      "name": "Nullable types use ?",
+      "description": "If any field can be absent (e.g. a `description` or `dueAt`), it is typed `String?` / `Instant?` etc., not `Optional<String>` or a Java-style nullable workaround. K-2 of jbaruch/kotlin-tutor.",
+      "max_score": 10
+    },
+    {
+      "name": "No manual equals/hashCode/toString",
+      "description": "The task record (and any helper types) does not include hand-written `override fun equals`, `override fun hashCode`, or `override fun toString`. The compiler generates these for `data class` automatically. K-3 of jbaruch/kotlin-tutor.",
+      "max_score": 10
+    },
+    {
+      "name": "addTask works",
+      "description": "Calling addTask(\"buy milk\") followed by reading the list returns a single task with title 'buy milk'",
+      "max_score": 10
+    },
+    {
+      "name": "markComplete works",
+      "description": "Calling markComplete(id) on a previously-added task flips its completed flag (or equivalent state representation) to true; the task remains in the list",
+      "max_score": 10
+    }
+  ]
+}

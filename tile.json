@@ -1,6 +1,6 @@
 {
   "name": "jbaruch/kotlin-tutor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "summary": "Teaches AI agents to write idiomatic Kotlin instead of Java-in-a-.kt-file.",
   "private": false,
   "entrypoint": "README.md",

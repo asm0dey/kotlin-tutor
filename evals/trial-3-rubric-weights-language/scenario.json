@@ -1,0 +1,1 @@
+{ "description": "Pedagogical (slide-59 demo): task is language-neutral, rubric weights idiomatic Kotlin 80% + features 10% each — baseline drops to ~20% (it picks any language), with-plugin reaches ~95%, lift is measurable" }

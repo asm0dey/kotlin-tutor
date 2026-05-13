@@ -1,0 +1,16 @@
+{
+  "context": "Tests whether the agent implements a working todo app with the two required operations. Deliberately grades features only — no language idiom checks — to demonstrate the slide-59 failure mode where baseline scores 100% because the rubric checks behavior any competent agent produces (when told 'in Kotlin' in the task).",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "addTask works",
+      "description": "Calling addTask(\"buy milk\") followed by reading the list returns a single task with title 'buy milk'",
+      "max_score": 50
+    },
+    {
+      "name": "markComplete works",
+      "description": "Calling markComplete(id) on a previously-added task flips its completed flag (or equivalent state representation) to true; the task remains in the list",
+      "max_score": 50
+    }
+  ]
+}
