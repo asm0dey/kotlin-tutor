@@ -2,11 +2,16 @@
 
 [![tessl](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.tessl.io%2Fv1%2Fbadges%2Fjbaruch%2Fkotlin-tutor)](https://tessl.io/registry/jbaruch/kotlin-tutor)
 
-Teaches AI coding agents to write idiomatic Kotlin instead of Java-in-a-`.kt`-file. Six rules covering the highest-leverage Kotlin idioms, three skills that perform the common conversions, and a CI script that gates the JUnit-to-Kotest migration deterministically.
+Teaches AI coding agents to write idiomatic Kotlin instead of Java-in-a-`.kt`-file — AND to make the right stack choices on JVM. Twelve `alwaysApply` rules cover both the highest-leverage Kotlin idioms and the canonical library + tooling defaults (Kotlin 2.3, JDK 21, Gradle Kotlin DSL, Ktor, coroutines, DJL, JavaCV, Koog). Three skills perform the common conversions, plus a CI script that gates the JUnit-to-Kotest migration deterministically.
 
 ## Why This Plugin Exists
 
-A coding agent without Kotlin context writes Kotlin like a Java developer who learned the syntax over a long weekend: regular `class` instead of `data class`, manual `equals` / `hashCode`, `var` properties everywhere, `Optional<String>` for nullables, JUnit assertions in test files. It compiles. It runs. It's Java in a `.kt` file. This plugin closes the gap — one `tessl install` and your agent knows the difference.
+A coding agent without Kotlin context produces one of two failures:
+
+1. **Not Kotlin at all.** Ask it to "write a program that turns on my smart bulb" and you get Python with `requests`, because that's the median answer in training data — even when you're in a Kotlin Gradle project.
+2. **Kotlin that's actually Java.** Regular `class` instead of `data class`, manual `equals` / `hashCode`, `var` properties everywhere, `Optional<String>` for nullables, JUnit assertions in test files. Compiles, runs, but it's Java in a `.kt` file.
+
+One `tessl install` closes both gaps. The agent learns: (a) the JVM has first-class Kotlin libraries for the tasks you actually need (Ktor for HTTP, DJL for ML, JavaCV for vision, Koog for agents) so the answer to "turn on my bulb" is a Kotlin program, not a Python script; and (b) when it writes that Kotlin, it writes idiomatic Kotlin.
 
 ## Installation
 
@@ -16,7 +21,9 @@ tessl install jbaruch/kotlin-tutor
 
 ## What's Included
 
-### Rules (6)
+### Rules (12)
+
+#### Idiom rules — write Kotlin, not Java-in-a-`.kt`
 
 | ID | Rule | Summary |
 |----|------|---------|
@@ -26,6 +33,17 @@ tessl install jbaruch/kotlin-tutor
 | K-4 | [kotest-over-junit](rules/kotest-over-junit.md) | Tests use Kotest matchers and specs, not `assertEquals` and `@Test` |
 | K-5 | [prefer-stdlib-scope](rules/prefer-stdlib-scope.md) | Use `.let` / `.also` / `.apply` over imperative Java patterns |
 | K-6 | [extension-over-util](rules/extension-over-util.md) | Extension functions, not `*Utils` classes with static methods |
+
+#### Stack rules — pick Kotlin libraries on JVM, not Python or legacy Java
+
+| ID | Rule | Summary |
+|----|------|---------|
+| S-1 | [kotlin-stack-defaults](rules/kotlin-stack-defaults.md) | Kotlin 2.3, JDK 21, Gradle Kotlin DSL — these are the defaults, not optional |
+| S-2 | [coroutines-for-concurrency](rules/coroutines-for-concurrency.md) | kotlinx-coroutines over `Thread`/`Future`/RxJava; `Dispatchers.IO` for I/O, `Default` for CPU |
+| S-3 | [ktor-for-http](rules/ktor-for-http.md) | Ktor client + server (CIO engine) for HTTP — not OkHttp, not `java.net.HttpURLConnection` |
+| S-4 | [djl-for-jvm-ml](rules/djl-for-jvm-ml.md) | DJL for on-JVM ML inference — not Python subprocesses, not hand-rolled JNI |
+| S-5 | [javacv-for-vision](rules/javacv-for-vision.md) | JavaCV (OpenCV bindings) for camera + image processing — not `cv2` via subprocess |
+| S-6 | [koog-for-agents](rules/koog-for-agents.md) | Koog for AI agent orchestration on JVM — not Python-only frameworks |
 
 ### Skills (3)
 

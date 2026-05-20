@@ -1,7 +1,7 @@
 {
   "name": "jbaruch/kotlin-tutor",
   "version": "0.4.0",
-  "summary": "Teaches AI agents to write idiomatic Kotlin instead of Java-in-a-.kt-file.",
+  "summary": "Teaches AI agents to write idiomatic Kotlin (data classes, val, scope fns, Kotest) AND to make the right stack choices on JVM: Kotlin 2.3 + JDK 21 + Gradle Kotlin DSL, Ktor for HTTP, kotlinx-coroutines, DJL for ML inference, JavaCV for vision, Koog for AI agent orchestration.",
   "private": false,
   "entrypoint": "README.md",
   "keywords": [
@@ -10,7 +10,13 @@
     "kotest",
     "data-class",
     "agents",
-    "quality"
+    "quality",
+    "ktor",
+    "coroutines",
+    "djl",
+    "javacv",
+    "koog",
+    "gradle"
   ],
   "skills": {
     "kotlinify-tests": {
@@ -24,6 +30,10 @@
     }
   },
   "steering": {
+    "kotlin-stack-defaults": {
+      "rules": "rules/kotlin-stack-defaults.md",
+      "alwaysApply": true
+    },
     "prefer-val": {
       "rules": "rules/prefer-val.md",
       "alwaysApply": true
@@ -46,6 +56,26 @@
     },
     "extension-over-util": {
       "rules": "rules/extension-over-util.md",
+      "alwaysApply": true
+    },
+    "coroutines-for-concurrency": {
+      "rules": "rules/coroutines-for-concurrency.md",
+      "alwaysApply": true
+    },
+    "ktor-for-http": {
+      "rules": "rules/ktor-for-http.md",
+      "alwaysApply": true
+    },
+    "djl-for-jvm-ml": {
+      "rules": "rules/djl-for-jvm-ml.md",
+      "alwaysApply": true
+    },
+    "javacv-for-vision": {
+      "rules": "rules/javacv-for-vision.md",
+      "alwaysApply": true
+    },
+    "koog-for-agents": {
+      "rules": "rules/koog-for-agents.md",
       "alwaysApply": true
     }
   }
