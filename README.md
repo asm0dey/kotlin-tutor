@@ -33,7 +33,7 @@ tessl install jbaruch/kotlin-tutor
 | K-4 | [kotest-over-junit](rules/kotest-over-junit.md) | Tests use Kotest matchers and specs, not `assertEquals` and `@Test` |
 | K-5 | [prefer-stdlib-scope](rules/prefer-stdlib-scope.md) | Use `.let` / `.also` / `.apply` over imperative Java patterns |
 | K-6 | [extension-over-util](rules/extension-over-util.md) | Extension functions, not `*Utils` classes with static methods |
-| K-7 | [stateflow-over-atomic-polling](rules/stateflow-over-atomic-polling.md) | `MutableStateFlow<T>` for single-writer / many-reader reactive state — not `AtomicReference<T?>` + a `delay`-poll loop |
+| K-7 | [stateflow-over-atomic-polling](rules/stateflow-over-atomic-polling.md) | `MutableStateFlow<T?>` (or `MutableStateFlow<T>` with a default) for single-writer / many-reader reactive state — not `AtomicReference<T?>` + a `delay`-poll loop |
 
 #### Stack rules — pick Kotlin libraries on JVM, not Python or legacy Java
 
