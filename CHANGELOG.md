@@ -2,6 +2,17 @@
 
 All notable changes to `jbaruch/kotlin-tutor` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] — 2026-05-21
+
+### Fixed
+
+- `rules/koog-for-agents.md` "Idiomatic Use" section was still describing the 0.7.x API after the 0.6.0 version pin bump. Reported in [#3](https://github.com/jbaruch/kotlin-tutor/issues/3) from a real migration of `jbaruch/robocoders-kagematch` to `1.0.0-preview3` (commit [`256b7c1`](https://github.com/jbaruch/robocoders-kagematch/commit/256b7c1)) where the rule's wording cost ~20 minutes of jar-disassembly before the correct surface was found. Rewrote "Idiomatic Use" as two version-explicit sections covering the gaps the issue called out:
+  - **`simpleAnthropicExecutor(...)` is gone in 1.0** — replacement is `PromptExecutor.builder().anthropic(apiKey).build()` (same shape for `.openAI(...)`, `.google(...)`, `.ollama(...)`)
+  - **`AIAgent(...)` now requires `strategy`** — the 0.7.x signature without `strategy` does not compile against 1.0; `AIAgent` is an abstract class and `AIAgent(...)` is a top-level factory function
+  - **`functionalStrategy<I, O> { input -> ... }`** is the simplest strategy primitive, with three pitfalls now documented: single-arg lambda (`this` is the context, not a second param), `Message.Assistant.parts: List<MessagePart>` extraction (not `.content` / `.text`), and avoid the Java `AIAgent.builder().functionalStrategy(BiFunction<...>)` overload from Kotlin (it's blocking)
+  - **Don't import `anthropicClient(...)` directly** — the `AnthropicClientFactory` bytecode advertises it as a top-level facade but it isn't resolvable from Kotlin source against Kotlin 2.3.0; use the executor builder instead
+  - **0.8.0 stable fallback** now has its own subsection making the "if you pin 0.8.0, here's the code that still works" path explicit and contrasting it against the 1.0 sample
+
 ## [0.6.0] — 2026-05-21
 
 ### Changed

@@ -1,6 +1,6 @@
 {
   "name": "jbaruch/kotlin-tutor",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "summary": "Teaches AI agents to write idiomatic Kotlin (data classes, val, scope fns, Kotest) AND to make the right stack choices on JVM: Kotlin 2.3 + JDK 21 + Gradle Kotlin DSL, Ktor for HTTP, kotlinx-coroutines, DJL for ML inference, JavaCV for vision, Koog for AI agent orchestration.",
   "private": false,
   "entrypoint": "README.md",

@@ -14,25 +14,28 @@ alwaysApply: true
 
 - **Koog 1.0.0-preview3** runs on **Kotlin 2.3.x** and requires **JDK 17 minimum** (JDK 21 still recommended). The 1.0 preview line splits modules into stable (`1.0.0-preview*`) and beta (`1.0.0-beta-preview*`) streams so production code can pin to APIs that won't break without a deprecation cycle
 - Pin via: `implementation("ai.koog:koog-agents:1.0.0-preview3")`
-- If you're migrating from 0.7.x / 0.8.0: HTTP transport is now decoupled from Ktor (LLM clients take a `KoogHttpClient.Factory`), the `AgentMemory` feature is removed in favor of `LongTermMemory`, Java blocking methods are renamed to the `*Blocking` suffix, and planners moved to a separate `agents:agents-planners` module. The 1.0 preview line's full breaking-change list lives in the initial [`1.0.0-preview` release notes](https://github.com/JetBrains/koog/releases/tag/1.0.0-preview) — `preview2` / `preview3` add only follow-up bug fixes on top.
+- Breaking changes from 0.7.x / 0.8.0: HTTP transport decoupled from Ktor (LLM clients take a `KoogHttpClient.Factory`), `AgentMemory` removed in favor of `LongTermMemory`, Java blocking methods renamed to `*Blocking`, planners moved to a separate `agents:agents-planners` module. Full list in the initial [`1.0.0-preview` release notes](https://github.com/JetBrains/koog/releases/tag/1.0.0-preview); `preview2` / `preview3` add follow-up bug fixes only
 
-## Idiomatic Use
+## Idiomatic Use — 1.0.0-preview*
 
-- An `AIAgent` is a value with a `promptExecutor`, `llmModel`, optional `systemPrompt`, and optional `toolRegistry`
+- LLM executors are built via `PromptExecutor.builder().anthropic(apiKey).build()` (same shape for `.openAI(...)`, `.google(...)`, `.ollama(...)`). The 0.7.x / 0.8.0 `simpleAnthropicExecutor(apiKey)` convenience is **gone** in 1.0 — `PromptExecutor.builder()` is the replacement
+- `AIAgent(...)` is a top-level factory function and `strategy` is **required**, not optional. The shape is `AIAgent(promptExecutor = ..., llmModel = ..., strategy = ..., systemPrompt = ...)` — the 0.7.x signature without `strategy` does not compile against 1.0
+- The simplest strategy is the top-level `functionalStrategy<I, O> { input -> ... }` factory in `ai.koog.agents.core.agent`
+- Strategy trap 1 — the lambda takes **one** parameter; `this` is `AIAgentFunctionalContext`, not a second `context` arg
+- Strategy trap 2 — `requestLLM(input)` returns `Message.Assistant` with `parts: List<MessagePart>`, not a `.content` / `.text` string; extract via `parts.filterIsInstance<MessagePart.Text>().joinToString("\n") { it.text }` (explicit separator — the default `", "` will insert commas between parts)
+- Strategy trap 3 — the Java `AIAgent.builder().functionalStrategy(BiFunction<...>)` overload exists but is **blocking**; Kotlin code uses the top-level `functionalStrategy` factory so `suspend` calls (like `requestLLM`) work
+- Don't try to import `anthropicClient(...)` or `AnthropicClientFactory` from `ai.koog.prompt.executor.clients.anthropic` directly — the bytecode advertises them as a top-level facade but they're not resolvable from Kotlin source against Kotlin 2.3.0. Use `PromptExecutor.builder().anthropic(key)` instead
+- Models: `AnthropicModels.Sonnet_4` / `Opus_4_*`, `OpenAIModels.Chat.GPT4o`, the relevant Gemini model for Google, Ollama integration for local
 - `agent.run(input)` is `suspend` — call from `runBlocking { }` at the top level
-- Sub-agent pattern: wrap an agent as a tool via `AIAgentService.fromAgent(...).createAgentTool(...)`, then register that tool in the parent's `ToolRegistry`
-- Each sub-agent invocation gets a **fresh context** — pass anything the sub-agent needs explicitly via its system prompt (this is the "context engineering for the orchestrator" pattern; see `jbaruch/sub-agent-delegation`)
 
-## LLM Provider
+## Idiomatic Use — 0.8.0 Stable Fallback
 
-- For Anthropic: `simpleAnthropicExecutor(System.getenv("ANTHROPIC_API_KEY"))` + `AnthropicModels.Sonnet_4` (or `Opus_4_*`)
-- For OpenAI: `simpleOpenAIExecutor(...)` + `OpenAIModels.Chat.GPT4o`
-- For Google: `simpleGoogleExecutor(...)` + the relevant Gemini model
-- For local: configure via Ollama integration
+- If you can't take a pre-release, pin `ai.koog:koog-agents:0.8.0`. The 0.8.0 API matches 0.7.3: `simpleAnthropicExecutor(apiKey)` for the executor, `AIAgent(promptExecutor, llmModel, systemPrompt)` for the agent — no `strategy` required, no `functionalStrategy` needed. This is the explicit "stay on stable" code path; everything else in this rule targets the 1.0 preview line
 
-## Structured Output
+## Sub-Agents and Structured Output
 
-- When sub-agents need to return decisions for downstream code, prompt them to emit JSON with a schema, then parse with `kotlinx-serialization-json`. This is more robust than free-form natural language responses.
+- Sub-agent pattern: wrap an agent as a tool via `AIAgentService.fromAgent(...).createAgentTool(...)`, then register it in the parent's `ToolRegistry`. Each sub-agent invocation gets a **fresh context** — pass anything it needs explicitly via its system prompt (see `jbaruch/sub-agent-delegation`)
+- When sub-agents return decisions for downstream code, prompt them to emit JSON matching a schema, then parse with `kotlinx-serialization-json` — more robust than free-form natural language
 
 ## Anti-patterns
 
