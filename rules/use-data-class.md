@@ -21,3 +21,9 @@ alwaysApply: true
 - Update a `data class` instance via `instance.copy(field = newValue)` — preserves all other fields, gives you a new immutable instance
 - This composes with `val` (the previous rule) — together they make immutable update painless
 - Destructuring (`val (id, name) = user`) and `componentN()` come for free; lean on them when iterating collections of value objects
+
+## The Public-API Exception
+
+- This rule is about application and internal code. A value type on a **published library API** is the one place to think twice: the generated constructor, `copy()`, and `componentN()` signatures shift when you add or reorder a property, breaking binary compatibility for downstream consumers
+- The [Kotlin Library Authors' guidelines](https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html) advise a regular class for stable public API surface for exactly this reason
+- When the type is library API, reach for the `kotlin-api-review` skill before converting

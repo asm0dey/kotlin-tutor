@@ -2,7 +2,7 @@
 
 [![tessl](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.tessl.io%2Fv1%2Fbadges%2Fjbaruch%2Fkotlin-tutor)](https://tessl.io/registry/jbaruch/kotlin-tutor)
 
-Teaches AI coding agents to write idiomatic Kotlin instead of Java-in-a-`.kt`-file — AND to make the right stack choices on JVM. Thirteen `alwaysApply` rules cover both the highest-leverage Kotlin idioms and the canonical library + tooling defaults (Kotlin 2.3, JDK 21, Gradle Kotlin DSL, Ktor, coroutines, DJL, JavaCV, Koog). Three skills perform the common conversions, plus a CI script that gates the JUnit-to-Kotest migration deterministically.
+Teaches AI coding agents to write idiomatic Kotlin instead of Java-in-a-`.kt`-file — AND to make the right stack choices on JVM. Thirteen `alwaysApply` rules cover both the highest-leverage Kotlin idioms and the canonical library + tooling defaults (Kotlin 2.3, JDK 21, Gradle Kotlin DSL, Ktor, coroutines, DJL, JavaCV, Koog). Four skills handle the common conversions and a public-API review against the Kotlin Library Authors' guidelines, plus a CI script that gates the JUnit-to-Kotest migration deterministically.
 
 ## Why This Plugin Exists
 
@@ -35,6 +35,8 @@ tessl install jbaruch/kotlin-tutor
 | K-6 | [extension-over-util](rules/extension-over-util.md) | Extension functions, not `*Utils` classes with static methods |
 | K-7 | [stateflow-over-atomic-polling](rules/stateflow-over-atomic-polling.md) | `MutableStateFlow<T?>` (or `MutableStateFlow<T>` with a default) for single-writer / many-reader reactive state — not `AtomicReference<T?>` + a `delay`-poll loop |
 
+The idiom rules govern application and internal code. Two of them — `use-data-class` (K-3) and `nullable-question-mark` (K-2) — carry a public-API exception: on a published library surface, a `data class` or a return-type swap can break binary compatibility. There the `kotlin-api-review` skill takes over.
+
 #### Stack rules — pick Kotlin libraries on JVM, not Python or legacy Java
 
 | ID | Rule | Summary |
@@ -46,13 +48,14 @@ tessl install jbaruch/kotlin-tutor
 | S-5 | [javacv-for-vision](rules/javacv-for-vision.md) | JavaCV (OpenCV bindings) for camera + image processing — not `cv2` via subprocess |
 | S-6 | [koog-for-agents](rules/koog-for-agents.md) | Koog for AI agent orchestration on JVM — not Python-only frameworks |
 
-### Skills (3)
+### Skills (4)
 
 | Skill | Description |
 |-------|-------------|
 | [kotlinify-tests](skills/kotlinify-tests/SKILL.md) | Convert JUnit-style test classes to idiomatic Kotest specs; delegates to `verify-no-junit-assertions.sh` for the deterministic gate |
 | [pojoify-to-dataclass](skills/pojoify-to-dataclass/SKILL.md) | Refactor a Java-style POJO (manual equals/hashCode/toString, bean accessors) into an idiomatic Kotlin `data class` |
 | [nullable-cleanup](skills/nullable-cleanup/SKILL.md) | Replace `Optional<T>` with `T?` and the `?.` / `?:` / `?.let { }` operators |
+| [kotlin-api-review](skills/kotlin-api-review/SKILL.md) | Review a published API surface against the [Kotlin Library Authors' guidelines](https://kotlinlang.org/docs/api-guidelines-introduction.html) — simplicity, readability, consistency, predictability, debuggability, testability, backward compatibility, multiplatform, documentation |
 
 ### Scripts (1)
 

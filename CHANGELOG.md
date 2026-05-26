@@ -2,6 +2,17 @@
 
 All notable changes to `jbaruch/kotlin-tutor` are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to [semantic versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] — 2026-05-26
+
+### Added
+
+- **New skill `kotlin-api-review`** — reviews a published API surface against the full [Kotlin Library Authors' guidelines](https://kotlinlang.org/docs/api-guidelines-introduction.html). Covers every theme the reference defines: the six mental-complexity attributes — simplicity (minimize components, reuse stdlib types, core abstractions), readability (compose over flags, DSLs, extensions, no boolean args, right numeric type), consistency (parameter order/naming, identical overloads, `OrNull`/`Catching` patterns, single error mechanism), predictability (sensible defaults, sealed over open, no exposed mutable state, `require`/`check` validation), debuggability (`toString` on stateful types, documented exception policy), and testability (test doubles behind a seam, injectable I/O dependencies) — plus backward compatibility (binary/source/behavioral distinction, explicit return types + Explicit API mode, manual overloads over default args, regular classes over data classes on public surface, `@PublishedApi`-is-public, return-type widening/narrowing, deprecation cycles, Binary Compatibility Validator, `@RequiresOptIn` with propagation), multiplatform (broadest-source-set placement, common-code design, cross-platform behaviour consistency, `expect`/`actual`, target coverage), and documentation (KDoc on every entry point, lambda exception/concurrency semantics, examples). Intent-discovered, so it carries **zero per-turn context cost** — unlike an `alwaysApply` rule, the library-authoring guidance loads only when the user is actually designing or reviewing a public API. Skill count grows from three to four
+
+### Changed
+
+- **K-3 `use-data-class`** gained a "Public-API Exception" section and **K-2 `nullable-question-mark`** gained an "On a Published API, Mind the Migration" section. The always-on idiom advice ("always use `data class`", "swap `Optional<T>` for `T?`") is correct for application and internal code but breaks binary compatibility on a published library surface — both rules now name that boundary and hand off to `kotlin-api-review`. The conversion skills `pojoify-to-dataclass` and `nullable-cleanup` carry the matching public-API caveat at their decision steps
+- README intro, idiom-rules section, and skills table updated for the four-skill total and the rule/skill hand-off
+
 ## [0.7.0] — 2026-05-21
 
 ### Added
