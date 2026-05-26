@@ -2,7 +2,7 @@
 
 [![tessl](https://img.shields.io/endpoint?url=https%3A%2F%2Fapi.tessl.io%2Fv1%2Fbadges%2Fjbaruch%2Fkotlin-tutor)](https://tessl.io/registry/jbaruch/kotlin-tutor)
 
-Teaches AI coding agents to write idiomatic Kotlin instead of Java-in-a-`.kt`-file — AND to make the right stack choices on JVM. Eighteen `alwaysApply` rules cover both the highest-leverage Kotlin idioms and the canonical library + tooling defaults (Kotlin 2.3, JDK 21, Gradle Kotlin DSL, Ktor, coroutines, DJL, JavaCV, Koog). Four skills handle the common conversions and a public-API review for the concerns that only matter once an API is published, plus a CI script that gates the JUnit-to-Kotest migration deterministically.
+Teaches AI coding agents to write idiomatic Kotlin instead of Java-in-a-`.kt`-file — AND to make the right stack choices on JVM. Thirteen `alwaysApply` rules cover both the highest-leverage Kotlin idioms and the canonical library + tooling defaults (Kotlin 2.3, JDK 21, Gradle Kotlin DSL, Ktor, coroutines, DJL, JavaCV, Koog). Four skills handle the common conversions and an API-design review covering the situational guidance that doesn't earn always-on context cost, plus a CI script that gates the JUnit-to-Kotest migration deterministically.
 
 ## Why This Plugin Exists
 
@@ -21,7 +21,7 @@ tessl install jbaruch/kotlin-tutor
 
 ## What's Included
 
-### Rules (18)
+### Rules (13)
 
 #### Idiom rules — write Kotlin, not Java-in-a-`.kt`
 
@@ -34,13 +34,8 @@ tessl install jbaruch/kotlin-tutor
 | K-5 | [prefer-stdlib-scope](rules/prefer-stdlib-scope.md) | Use `.let` / `.also` / `.apply` over imperative Java patterns |
 | K-6 | [extension-over-util](rules/extension-over-util.md) | Extension functions, not `*Utils` classes with static methods |
 | K-7 | [stateflow-over-atomic-polling](rules/stateflow-over-atomic-polling.md) | `MutableStateFlow<T?>` (or `MutableStateFlow<T>` with a default) for single-writer / many-reader reactive state — not `AtomicReference<T?>` + a `delay`-poll loop |
-| K-8 | [avoid-boolean-arguments](rules/avoid-boolean-arguments.md) | A `Boolean` parameter hides its meaning at the call site; split into named functions or use an `enum` |
-| K-9 | [read-only-collections](rules/read-only-collections.md) | Signatures take and return `List` / `Set` / `Map`, not the `Mutable` variants; never expose live internal mutable state |
-| K-10 | [require-check-validation](rules/require-check-validation.md) | Validate inputs with `require()`, instance state with `check()` — fail fast with a clear message, not a deep NPE |
-| K-11 | [sealed-for-closed-hierarchies](rules/sealed-for-closed-hierarchies.md) | `sealed` types when the set of subtypes is fixed, for exhaustive `when` without `else` — not `open` |
-| K-12 | [meaningful-tostring](rules/meaningful-tostring.md) | Stateful non-`data` classes override `toString()` to render state for logs/debuggers — never leaking secrets |
 
-The idiom rules govern application and internal code. Two of them — `use-data-class` (K-3) and `nullable-question-mark` (K-2) — carry a public-API exception: on a published library surface, a `data class` or a return-type swap can break binary compatibility. The `kotlin-api-review` skill takes over there, and folds in the further concerns that only apply to published APIs (backward compatibility, multiplatform, documentation).
+The idiom rules govern application and internal code — the per-line idioms worth their always-on context cost. Broader API-design judgement (boolean args, read-only collections, validation, sealed hierarchies, `toString`, backward compatibility, multiplatform, documentation) is situational, so it lives in the `kotlin-api-review` skill rather than always-on rules. Two rules — `use-data-class` (K-3) and `nullable-question-mark` (K-2) — carry a one-line public-API exception that hands off to that skill, because their always-on advice can break binary compatibility on a published surface.
 
 #### Stack rules — pick Kotlin libraries on JVM, not Python or legacy Java
 
@@ -60,7 +55,7 @@ The idiom rules govern application and internal code. Two of them — `use-data-
 | [kotlinify-tests](skills/kotlinify-tests/SKILL.md) | Convert JUnit-style test classes to idiomatic Kotest specs; delegates to `verify-no-junit-assertions.sh` for the deterministic gate |
 | [pojoify-to-dataclass](skills/pojoify-to-dataclass/SKILL.md) | Refactor a Java-style POJO (manual equals/hashCode/toString, bean accessors) into an idiomatic Kotlin `data class` |
 | [nullable-cleanup](skills/nullable-cleanup/SKILL.md) | Replace `Optional<T>` with `T?` and the `?.` / `?:` / `?.let { }` operators |
-| [kotlin-api-review](skills/kotlin-api-review/SKILL.md) | Review a published API surface for the concerns that only matter once it ships — simplicity, readability, consistency, predictability, debuggability, testability, backward compatibility, multiplatform, documentation |
+| [kotlin-api-review](skills/kotlin-api-review/SKILL.md) | Review an API you're designing or exposing — function, class, or published library — for design concerns: simplicity, readability, consistency, predictability, debuggability, testability, plus (published surfaces only) backward compatibility, multiplatform, documentation |
 
 ### Scripts (1)
 
@@ -87,8 +82,8 @@ The `kotlinify-tests` skill demonstrates the script-delegation pattern in miniat
 
 ## Conventions
 
-- All eighteen rules apply per-turn (frontmatter `alwaysApply: true`); agents see them on every prompt
+- All thirteen rules apply per-turn (frontmatter `alwaysApply: true`); agents see them on every prompt
 - Skills are intent-discovered via the trigger phrases in their `description` field
-- Rule IDs (`K-1` through `K-12`, `S-1` through `S-6`) are talk-shorthand for the descriptive filenames; the registry uses the filenames
+- Rule IDs (`K-1` through `K-7`, `S-1` through `S-6`) are talk-shorthand for the descriptive filenames; the registry uses the filenames
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.

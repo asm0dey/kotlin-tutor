@@ -24,6 +24,4 @@ alwaysApply: true
 
 ## The Public-API Exception
 
-- This rule is about application and internal code. A value type on a **published library API** is the one place to think twice: the generated constructor, `copy()`, and `componentN()` signatures shift when you add or reorder a property, breaking binary compatibility for downstream consumers
-- On a stable public surface, prefer a regular class for exactly this reason
-- When the type is library API, reach for the `kotlin-api-review` skill before converting
+- This rule targets application and internal code. On a **published, binary-stable API** a `data class` is the exception — its generated constructor / `copy()` / `componentN()` signatures break binary compatibility when properties change, so prefer a regular class there. Use the `kotlin-api-review` skill before converting library surface

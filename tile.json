@@ -65,26 +65,6 @@
       "rules": "rules/stateflow-over-atomic-polling.md",
       "alwaysApply": true
     },
-    "avoid-boolean-arguments": {
-      "rules": "rules/avoid-boolean-arguments.md",
-      "alwaysApply": true
-    },
-    "read-only-collections": {
-      "rules": "rules/read-only-collections.md",
-      "alwaysApply": true
-    },
-    "require-check-validation": {
-      "rules": "rules/require-check-validation.md",
-      "alwaysApply": true
-    },
-    "sealed-for-closed-hierarchies": {
-      "rules": "rules/sealed-for-closed-hierarchies.md",
-      "alwaysApply": true
-    },
-    "meaningful-tostring": {
-      "rules": "rules/meaningful-tostring.md",
-      "alwaysApply": true
-    },
     "coroutines-for-concurrency": {
       "rules": "rules/coroutines-for-concurrency.md",
       "alwaysApply": true

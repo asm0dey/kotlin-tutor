@@ -1,33 +1,34 @@
 ---
 name: kotlin-api-review
 description: >
-  Review a Kotlin library's public API surface for the concerns that only
-  matter once an API is published: simplicity, readability, consistency,
-  predictability, debuggability, testability, backward compatibility,
-  multiplatform, and documentation. Use when the user is designing or
-  reviewing a published API — phrases like "review my public API," "is this
-  API idiomatic," "will this break binary compatibility," "API guidelines
-  check," "audit my library's surface," or when changing a type that other
-  modules or external consumers depend on. This is the library-authoring
-  counterpart to the always-on idiom rules: those govern how to write Kotlin,
-  this governs how to expose it.
+  Review the surface of a Kotlin API you're designing or exposing — a
+  function, a class, a module, or a published library — against the concerns
+  that govern good API design: simplicity, readability, consistency,
+  predictability, debuggability, testability, and (for published surfaces)
+  backward compatibility, multiplatform, and documentation. Use when the user
+  is designing or reviewing an API — phrases like "review this API," "is this
+  API idiomatic," "design this interface," "review my public API," "will this
+  break binary compatibility," "API design check," or when changing a type
+  that other modules or external consumers depend on. This is the
+  design-and-review counterpart to the always-on idiom rules: those govern how
+  to write a line of Kotlin, this governs how to shape and expose an API.
 ---
 
 # Kotlin API Review
 
-For library / published API surface only. Application and internal code is governed by the always-on idiom rules (`use-data-class`, `nullable-question-mark`, `extension-over-util`, `avoid-boolean-arguments`, `read-only-collections`, `require-check-validation`, `sealed-for-closed-hierarchies`, …), not this skill. The first job is to decide whether the code under review is actually public API.
+Reviews an API surface — anything from a single public function to a published library — for the design concerns that the always-on idiom rules (`use-data-class`, `nullable-question-mark`, `extension-over-util`, …) don't cover. This guidance is here, not in always-on rules, because it's situational: it earns its keep when you're shaping an API, not on every line of code.
 
 Process steps in order.
 
-## Step 0 — Confirm The Surface Is Public
+## Step 0 — Identify The Surface And Its Exposure
 
-- Identify what is genuinely exposed: `public` declarations, `@PublishedApi` (inlined into consumer bytecode — treat as public), multiplatform `expect`/`actual`, anything other modules or external users depend on
-- `internal` / `private` declarations are out of scope — report and skip them
-- If nothing here is published API, stop and say so: the idiom rules already cover internal code
+- Identify what's exposed and to whom: `public` declarations, `@PublishedApi` (inlined into consumer bytecode — treat as public), multiplatform `expect`/`actual`, and who depends on it (same module, other modules, external consumers)
+- **Exposure level decides which steps apply.** Steps 2–7 (simplicity, predictability, readability, consistency, debuggability, testability) apply to any API surface. Step 1 (backward compatibility) applies only to a **published / binary-stable** surface; Step 8 (multiplatform) only to a **Kotlin Multiplatform** library
+- Note the level up front, then run only the steps that fit
 
-## Step 1 — Backward Compatibility (the highest-stakes checks)
+## Step 1 — Backward Compatibility (published surface only — the highest-stakes checks)
 
-First, know which kind of compatibility a finding breaks — name it in the report:
+Skip for internal / application code. For a published, binary-stable surface, first know which kind of compatibility a finding breaks — name it in the report:
 
 - **Binary** — already-compiled client code keeps linking against the new version (no `NoSuchMethodError`). Hardest to preserve, most important for a published library
 - **Source** — client code recompiles unchanged against the new version. Desirable but an aspiration, not a promise
@@ -56,16 +57,16 @@ Flag, per declaration:
 
 - **Do the right thing by default** — the happy path should work with minimal config; supply sensible defaults
 - **Allow extension** where the right choice can't be predetermined (extension functions/properties, pluggable strategies)
-- **Prevent invalid extension** — `sealed` types over `open` when only specific implementations are valid (the `sealed-for-closed-hierarchies` rule covers this idiom)
-- **No exposed mutable state** — return read-only collections, never the live mutable internal (the `read-only-collections` rule covers this idiom)
-- **Validate inputs/state** — `require()` for arguments, `check()` for instance state (the `require-check-validation` rule covers this idiom)
+- **Prevent invalid extension** — `sealed` types over `open` when only specific implementations are valid; enables exhaustive `when` with no `else`, so a new subtype turns every unhandled branch into a compile error
+- **No exposed mutable state** — return read-only `List` / `Set` / `Map`, never the live mutable internal; return `.toList()` when callers need a stable snapshot; keep `Array` out of public signatures (`vararg` + spread already defensively copies)
+- **Validate inputs/state** — `require()` for arguments (`IllegalArgumentException`), `check()` for instance state (`IllegalStateException`); put the offending value in the message, never sensitive data
 
 ## Step 4 — Readability
 
 - **Compose over parameters** — `flow.filter().map().buffer()` beats one function with `filter`/`map`/`buffer` flags
 - **DSLs for configuration** — trailing lambda-with-receiver for builder-style config
 - **Extensions for layered behaviour** — only core behaviour, operators, and overrides as members; everything else as extensions (mirrors the `extension-over-util` rule)
-- **No boolean arguments** — `doWork(true)` is unreadable; split into named functions (`map` / `mapNotNull`) or an `enum` (the `avoid-boolean-arguments` rule covers this idiom)
+- **No boolean arguments** — `doWork(true)` is unreadable at the call site; split into named functions (`map` / `mapNotNull`), use an `enum` for three-plus modes, or at least require the flag be passed as a named argument (`overwrite = true`)
 - **Right numeric type** — `Int`/`Long`/`Double` for arithmetic, `Byte`/`Short`/`Float` for storage constraints, unsigned types for full-positive/interop, inline value classes for IDs and other non-arithmetic entities
 
 ## Step 5 — Consistency
