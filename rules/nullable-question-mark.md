@@ -22,3 +22,8 @@ alwaysApply: true
 - When consuming a Java method that may return null, type the result as `T?` and let the type system protect you
 - Don't paper over Java's lack of null annotations with `!!` or platform types — that's how `NullPointerException`s smuggle into Kotlin code
 - Annotate Kotlin APIs called from Java with `@JvmName` and clear nullability so the Java side sees the contract too
+
+## On a Published API, Mind the Migration
+
+- New code: write `T?` from the start — no caveat
+- Swapping an existing `Optional<T>` return type for `T?` on a **stable public API** is a binary- and source-breaking change. Route it through a deprecation cycle (`@Deprecated` + `ReplaceWith`), not an in-place swap. Use the `kotlin-api-review` skill when the type is library surface

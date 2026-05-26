@@ -55,6 +55,12 @@ A class is a candidate when it has all of:
 
 If any of these are missing, stop and report what you found. Not every class with `equals`/`hashCode` is a data class candidate — some have legitimate inheritance or behaviour.
 
+### Public-API caveat
+
+A `data class` is the wrong choice on a **published API**: the generated constructor, `copy()`, and `componentN()` signatures change when properties are added or reordered, breaking binary and behavioural compatibility. This is the public-API exception called out in the `use-data-class` rule.
+
+So before converting, check whether the type is part of a stable public/binary API (library surface, multiplatform module, anything other consumers depend on). If it is, flag it and prefer keeping a regular class — or convert only with the operator's explicit OK and a compatibility plan; the `kotlin-api-review` skill covers the full public-API checklist. Internal / application-only types are safe to convert.
+
 ## Step 2 — Capture The Field Order
 
 - Read the existing class and list the fields in the order they appear

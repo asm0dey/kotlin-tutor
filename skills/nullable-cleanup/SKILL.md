@@ -29,6 +29,8 @@ A site is a SAFE conversion target if:
 
 If a site is exposed to Java code and you can't verify the consumer is OK with `T?`, leave it and report it. Don't break Java callers silently.
 
+Changing a public return type (`Optional<T>` → `T?`) is a binary- and source-breaking change, and public declarations should carry explicit return types — the public-API exception called out in the `nullable-question-mark` rule. On a stable public API, route the change through a deprecation cycle (`@Deprecated` + `ReplaceWith`) instead of an in-place swap (the `kotlin-api-review` skill covers the full checklist); on internal code, convert freely.
+
 ## Step 3 — Rewrite Each Site
 
 For each safe conversion target:
