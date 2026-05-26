@@ -1,0 +1,51 @@
+{
+  "context": "Tests whether the agent correctly applies kotlin-api-review Steps 2-7, 9, and 10 to an internal API: flagging boolean arguments, exposed mutable state, inconsistent error handling, missing test doubles, missing toString, and missing KDoc, proposing correct alternatives, and emitting findings in the prescribed file:line report format.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "Boolean args flagged",
+      "description": "api-review.md flags that forceRefresh: Boolean in get() and cascade: Boolean in invalidate() are boolean arguments, and proposes an alternative (separate functions or named enum) rather than leaving them as-is",
+      "max_score": 14
+    },
+    {
+      "name": "Mutable state exposure flagged",
+      "description": "api-review.md flags that getAll() returns MutableList<String> instead of a read-only List<String>, explaining that callers can mutate the internal structure",
+      "max_score": 12
+    },
+    {
+      "name": "Inconsistent error handling flagged",
+      "description": "api-review.md flags that fetchItem() throws while getItem() returns null for the same 'key not found' condition — the API uses two different error-handling mechanisms for the same concept — and recommends consolidating to one",
+      "max_score": 12
+    },
+    {
+      "name": "Test doubles / interface seam recommended",
+      "description": "api-review.md recommends extracting an interface (or sealed type) for CacheService so that callers can substitute a fake or in-memory implementation in tests without needing a live Redis connection",
+      "max_score": 14
+    },
+    {
+      "name": "Input validation recommended",
+      "description": "api-review.md recommends adding require() or check() calls to validate inputs (e.g. blank key, non-positive TTL) so callers receive a clear IllegalArgumentException or IllegalStateException rather than undefined Redis behaviour",
+      "max_score": 10
+    },
+    {
+      "name": "toString recommended",
+      "description": "api-review.md recommends adding a meaningful toString() to CacheService (covering at least redisUrl and/or defaultTtlSeconds) to aid debugging",
+      "max_score": 10
+    },
+    {
+      "name": "KDoc missing flagged",
+      "description": "api-review.md notes that public entry points lack KDoc and recommends adding documentation that describes behaviour, valid input ranges, and the exception thrown (for fetchItem)",
+      "max_score": 10
+    },
+    {
+      "name": "File:line report format",
+      "description": "api-review.md contains at least three findings written in a 'file:line — category: problem. fix.' format pointing to plausible line numbers in CacheService.kt",
+      "max_score": 10
+    },
+    {
+      "name": "Naming inconsistency flagged",
+      "description": "api-review.md flags that the API mixes naming styles (get vs fetchItem vs getItem vs put vs invalidate) and recommends adopting a single consistent term for retrieval operations",
+      "max_score": 8
+    }
+  ]
+}

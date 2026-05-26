@@ -1,0 +1,51 @@
+{
+  "context": "Tests whether the agent correctly applies the kotlin-api-review skill to a published library: identifying backward-compatibility risks (data class, default args, implicit return types) and following the prescribed report format, tooling recommendations, and non-auto-apply rule for breaking changes.",
+  "type": "weighted_checklist",
+  "checklist": [
+    {
+      "name": "data class flagged",
+      "description": "api-review.md flags that Notification and/or DeliveryReport are declared as data class on a published API surface, noting that adding or reordering a property breaks the generated constructor, copy(), or componentN() signatures",
+      "max_score": 14
+    },
+    {
+      "name": "Default args flagged",
+      "description": "api-review.md flags that send() and/or sendBatch() use default arguments (retries: Int = 3), explaining the binary-compat risk via the Kotlin $default synthetic method",
+      "max_score": 14
+    },
+    {
+      "name": "Implicit return types flagged",
+      "description": "api-review.md flags that send(), sendBatch(), statusFor(), and/or version() lack explicit return type declarations on their public signatures",
+      "max_score": 12
+    },
+    {
+      "name": "Explicit API mode recommended",
+      "description": "api-review.md recommends enabling Kotlin's Explicit API mode (explicitApi() in the Gradle build or equivalent compiler option) to enforce explicit return types and visibility across the public surface",
+      "max_score": 10
+    },
+    {
+      "name": "Binary Compatibility Validator recommended",
+      "description": "api-review.md recommends the Kotlin Binary Compatibility Validator (apiDump / apiCheck, or the .api file approach) to catch accidental breaking changes in CI",
+      "max_score": 12
+    },
+    {
+      "name": "Deprecation cycle prescribed",
+      "description": "api-review.md describes a deprecation cycle (Warning → Error → Hidden → Removal, using @Deprecated with message, replaceWith, and level) for handling breaking changes rather than in-place swaps",
+      "max_score": 10
+    },
+    {
+      "name": "No auto-apply of breaking changes",
+      "description": "api-review.md does NOT modify NotificationClient.kt or propose edits to fix the binary-compat findings directly. Breaking-change remediation is proposed, not applied.",
+      "max_score": 10
+    },
+    {
+      "name": "KDoc missing flagged",
+      "description": "api-review.md notes that one or more public entry points (send, sendBatch, statusFor, version) lack KDoc comments describing behaviour, parameters, or exceptions",
+      "max_score": 8
+    },
+    {
+      "name": "File:line report format",
+      "description": "api-review.md contains at least three findings written in the format 'NotificationClient.kt:<line> — <category>: <problem>.' where <line> is a plausible line number",
+      "max_score": 10
+    }
+  ]
+}
