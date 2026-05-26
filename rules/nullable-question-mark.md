@@ -26,4 +26,4 @@ alwaysApply: true
 ## On a Published API, Mind the Migration
 
 - New code: write `T?` from the start — no caveat
-- Swapping an existing `Optional<T>` return type for `T?` on a **stable public API** is a binary- and source-breaking change. The [Kotlin Library Authors' guidelines](https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html) route such changes through a deprecation cycle (`@Deprecated` + `ReplaceWith`), not an in-place swap. Use the `kotlin-api-review` skill when the type is library surface
+- Swapping an existing `Optional<T>` return type for `T?` on a **stable public API** is a binary- and source-breaking change. Route it through a deprecation cycle (`@Deprecated` + `ReplaceWith`), not an in-place swap. Use the `kotlin-api-review` skill when the type is library surface

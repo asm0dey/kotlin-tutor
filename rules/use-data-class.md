@@ -25,5 +25,5 @@ alwaysApply: true
 ## The Public-API Exception
 
 - This rule is about application and internal code. A value type on a **published library API** is the one place to think twice: the generated constructor, `copy()`, and `componentN()` signatures shift when you add or reorder a property, breaking binary compatibility for downstream consumers
-- The [Kotlin Library Authors' guidelines](https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html) advise a regular class for stable public API surface for exactly this reason
+- On a stable public surface, prefer a regular class for exactly this reason
 - When the type is library API, reach for the `kotlin-api-review` skill before converting

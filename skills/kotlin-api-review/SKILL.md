@@ -1,11 +1,10 @@
 ---
 name: kotlin-api-review
 description: >
-  Review a Kotlin library's public API surface against the Kotlin Library
-  Authors' guidelines (kotlinlang.org/docs/api-guidelines-introduction.html):
-  simplicity, readability, consistency, predictability, debuggability,
-  testability, backward compatibility, multiplatform, and documentation. Use
-  when the user is designing or
+  Review a Kotlin library's public API surface for the concerns that only
+  matter once an API is published: simplicity, readability, consistency,
+  predictability, debuggability, testability, backward compatibility,
+  multiplatform, and documentation. Use when the user is designing or
   reviewing a published API — phrases like "review my public API," "is this
   API idiomatic," "will this break binary compatibility," "API guidelines
   check," "audit my library's surface," or when changing a type that other
@@ -16,9 +15,9 @@ description: >
 
 # Kotlin API Review
 
-For library / published API surface only. Application and internal code is governed by the always-on idiom rules (`use-data-class`, `nullable-question-mark`, `extension-over-util`, …), not this skill. The first job is to decide whether the code under review is actually public API.
+For library / published API surface only. Application and internal code is governed by the always-on idiom rules (`use-data-class`, `nullable-question-mark`, `extension-over-util`, `avoid-boolean-arguments`, `read-only-collections`, `require-check-validation`, `sealed-for-closed-hierarchies`, …), not this skill. The first job is to decide whether the code under review is actually public API.
 
-Source of truth: the [Kotlin Library Authors' guidelines](https://kotlinlang.org/docs/api-guidelines-introduction.html). Process steps in order.
+Process steps in order.
 
 ## Step 0 — Confirm The Surface Is Public
 
@@ -27,8 +26,6 @@ Source of truth: the [Kotlin Library Authors' guidelines](https://kotlinlang.org
 - If nothing here is published API, stop and say so: the idiom rules already cover internal code
 
 ## Step 1 — Backward Compatibility (the highest-stakes checks)
-
-Source: [Backward compatibility](https://kotlinlang.org/docs/api-guidelines-backward-compatibility.html).
 
 First, know which kind of compatibility a finding breaks — name it in the report:
 
@@ -59,16 +56,16 @@ Flag, per declaration:
 
 - **Do the right thing by default** — the happy path should work with minimal config; supply sensible defaults
 - **Allow extension** where the right choice can't be predetermined (extension functions/properties, pluggable strategies)
-- **Prevent invalid extension** — `sealed` types over `open` when only specific implementations are valid (enables exhaustive `when` with no `else`)
-- **No exposed mutable state** — return `List<T>` not `MutableList<T>`; avoid arrays in public signatures (defensive-copy if unavoidable; `vararg` + spread already copies)
-- **Validate inputs/state** — `require()` for arguments (`IllegalArgumentException`), `check()` for instance state (`IllegalStateException`); put the offending value in the message, never sensitive data
+- **Prevent invalid extension** — `sealed` types over `open` when only specific implementations are valid (the `sealed-for-closed-hierarchies` rule covers this idiom)
+- **No exposed mutable state** — return read-only collections, never the live mutable internal (the `read-only-collections` rule covers this idiom)
+- **Validate inputs/state** — `require()` for arguments, `check()` for instance state (the `require-check-validation` rule covers this idiom)
 
 ## Step 4 — Readability
 
 - **Compose over parameters** — `flow.filter().map().buffer()` beats one function with `filter`/`map`/`buffer` flags
 - **DSLs for configuration** — trailing lambda-with-receiver for builder-style config
 - **Extensions for layered behaviour** — only core behaviour, operators, and overrides as members; everything else as extensions (mirrors the `extension-over-util` rule)
-- **No boolean arguments** — `doWork(true)` is unreadable; split into named functions (`map` / `mapNotNull`) or an `enum`
+- **No boolean arguments** — `doWork(true)` is unreadable; split into named functions (`map` / `mapNotNull`) or an `enum` (the `avoid-boolean-arguments` rule covers this idiom)
 - **Right numeric type** — `Int`/`Long`/`Double` for arithmetic, `Byte`/`Short`/`Float` for storage constraints, unsigned types for full-positive/interop, inline value classes for IDs and other non-arithmetic entities
 
 ## Step 5 — Consistency
